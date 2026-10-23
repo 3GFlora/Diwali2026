@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>3GFlora Catalogue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--ink:#f2f2f2;--mute:#9a9a9a;--line:#2a2a2a;--dot:rgba(255,255,255,.6);--dot-on:#fff;--navbg:rgba(20,20,20,.85);--navink:#f2f2f2;
+color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Jost',system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:300}
+header{text-align:center;padding:36px 16px 28px}
+header h1{margin:0;font-weight:300;font-size:22px;letter-spacing:.42em;padding-left:.42em}
+main{max-width:520px;margin:0 auto;padding:0 0 56px}
+.card{margin:0 0 44px}
+.media{position:relative}
+.track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;outline-offset:-2px}
+.track::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:1/1;background:var(--line)}
+.slide img{display:block;width:100%;height:100%;object-fit:cover}
+.dots{position:absolute;left:0;right:0;bottom:12px;display:flex;justify-content:center;gap:6px;pointer-events:none}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--dot);transition:background .2s,transform .2s}
+.dot.on{background:var(--dot-on);transform:scale(1.25)}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;border-radius:50%;background:var(--navbg);color:var(--navink);font-size:24px;line-height:1;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0 0 3px}
+.prev{left:10px}.next{right:10px}
+@media (hover:hover) and (pointer:fine){.nav{display:flex}.nav[hidden]{display:none}}
+.meta{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:16px 16px 0}
+.meta h2{margin:0;font-size:18px;font-weight:400;letter-spacing:.01em}
+.meta p{margin:0;font-size:18px;font-weight:500;white-space:nowrap}
+.meta s{font-weight:300;color:var(--mute);margin-right:10px;font-size:15px}
+.size{margin:8px 16px 22px;font-weight:300;font-size:13px;letter-spacing:.3em;color:var(--mute);text-transform:lowercase;border-top:1px solid var(--line);padding-top:26px}
+@media (min-width:560px){.size{margin-inline:0}}
+@media (min-width:560px){.card{margin-bottom:56px}.meta{padding-inline:0}}
+.offer{margin:4px 16px 0;font-size:13px;letter-spacing:.04em;color:var(--mute)}
+@media (min-width:560px){.offer{margin-inline:0}}
+.menu{padding:0 16px 24px;display:flex;flex-direction:column;gap:14px}
+.opt{display:flex;align-items:center;gap:16px;padding:12px;border:1px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none}
+.opt:active{background:var(--line)}
+.thumb{flex:0 0 76px;width:76px;height:76px;border-radius:10px;background:var(--line);overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.txt{flex:1;display:flex;flex-direction:column;gap:6px}
+.txt b{font-weight:400;font-size:18px}
+.txt small{font-size:13px;color:var(--mute);letter-spacing:.03em}
+.arr{font-size:26px;color:var(--mute)}
+.bar{display:flex;align-items:center;gap:12px;padding:12px 16px;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);margin-bottom:10px}
+.bar button,.backbtn{border:1px solid var(--ink)!important;color:var(--ink)!important}
+.backbtn{display:block;width:calc(100% - 32px);margin:8px 16px 40px;background:transparent;font:inherit;font-size:15px;letter-spacing:.06em;padding:14px;border-radius:28px;cursor:pointer;border:1px solid var(--ink)}
+@media (min-width:560px){.backbtn{width:100%;margin-inline:0}}
+.bar[hidden],.view[hidden],.menu[hidden]{display:none}
+.bar button{border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:14px;padding:8px 14px;border-radius:20px;cursor:pointer}
+.bar h3{margin:0;font-weight:400;font-size:15px;letter-spacing:.12em;text-transform:lowercase;color:var(--mute)}
+@media (min-width:560px){.menu,.bar{padding-inline:0}}
+.links{display:flex;justify-content:center;gap:12px;margin-top:18px}
+.links a{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border:1px solid var(--line);border-radius:22px;color:var(--ink);text-decoration:none;font-size:14px;letter-spacing:.06em}
+.links a:active{background:var(--line)}
+.thumb .mark{display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-size:22px;letter-spacing:.12em;color:var(--ink)}
+.about{padding:0 16px 8px}
+.about h2{margin:0 0 14px;font-weight:300;font-size:22px;letter-spacing:.08em}
+.about h3{margin:34px 0 14px;padding-top:22px;border-top:1px solid var(--line);font-weight:300;font-size:13px;letter-spacing:.3em;color:var(--mute);text-transform:lowercase}
+.about h4{margin:0 0 8px;font-weight:400;font-size:17px}
+.about p{margin:0 0 10px;font-size:15px;line-height:1.7;color:var(--ink)}
+.about .key{color:var(--mute)}
+.about .key b{font-weight:400;color:var(--ink)}
+.about .blk{margin:0 0 24px}
+.about blockquote{margin:0;padding:2px 0 2px 14px;border-left:2px solid var(--mute);font-size:15px;line-height:1.7;color:var(--ink)}
+.links.left{justify-content:flex-start;margin-top:6px}
+@media (min-width:560px){.about{padding-inline:0}}
+</style></head><body>
+<header><h1>3GFLORA</h1>
+<div class="links"><a href="https://www.instagram.com/3g_flora" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>Instagram</a><a href="https://wa.me/message/N4B776DFMREYF1" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 21l1.6-4.8A8.5 8.5 0 1 1 8 19.5L3 21z"/><path d="M9 8.5c.3 2.6 2.900 5.500 6.500 6.500l1.300-1.400-2.200-1-.9.900c-1-.5-2-1.500-2.500-2.500l.9-.9-1-2.200L9 8.500z" fill="currentColor" stroke="none"/></svg>WhatsApp</a></div></header>
+<main>
+<nav id="menu" class="menu">
+<a class="opt" href="#i8" data-go="i8"><span class="thumb"></span><span class="txt"><b>8 inch Pooja Thali</b><small>from ₹960</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#i6" data-go="i6"><span class="thumb"></span><span class="txt"><b>6 inch Pooja Thali</b><small>₹670</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#i5" data-go="i5"><span class="thumb"></span><span class="txt"><b>5 inch Pooja Thali</b><small>₹370</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#i4" data-go="i4"><span class="thumb"></span><span class="txt"><b>4 inch Pooja Thali</b><small>₹170 · Buy 2 for ₹299</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#diya" data-go="diya"><span class="thumb"></span><span class="txt"><b>Diya Holders</b><small>₹130 · Buy 2 for ₹240</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#gift" data-go="gift"><span class="thumb"></span><span class="txt"><b>Return Gifts</b><small>₹199 · Buy 2 for ₹360 · Bulk from ₹140</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#pres" data-go="pres"><span class="thumb"></span><span class="txt"><b>Preservation Work</b><small>Custom orders</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#np" data-go="np"><span class="thumb"></span><span class="txt"><b>Name Plates</b><small>Custom orders</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#ring" data-go="ring"><span class="thumb"></span><span class="txt"><b>Ring Platters</b><small>Custom orders</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#key" data-go="key"><span class="thumb"></span><span class="txt"><b>Keychains</b><small>Custom orders</small></span><span class="arr">&#8250;</span></a>
+<a class="opt" href="#about" data-go="about"><span class="thumb"><span class="mark">3G</span></span><span class="txt"><b>About 3G Flora</b><small>Who we are &amp; what we do</small></span><span class="arr">&#8250;</span></a>
+</nav>
+<div id="bar" class="bar" hidden><button id="back" type="button">&#8249; Main menu</button><h3 id="vt"></h3></div>
+<section class="view" id="v-i8" hidden data-title="8 inch Pooja Thali">
+
+<article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Vakratunda Pearl Bloom photos, swipe to see more"><div class="slide"><img src="Vakratunda_Pearl_Bloom_1.jpg" alt="Vakratunda Pearl Bloom photo 1" ></div><div class="slide"><img src="Vakratunda_Pearl_Bloom_2.jpg" alt="Vakratunda Pearl Bloom photo 2" loading="lazy"></div><div class="slide"><img src="Vakratunda_Pearl_Bloom_3.jpg" alt="Vakratunda Pearl Bloom photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Vakratunda Pearl Bloom</h2><p>₹1,480</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Blush Rose-Gold Bloom photos, swipe to see more"><div class="slide"><img src="Blush_Rose_Gold_Bloom_1.jpg" alt="Blush Rose-Gold Bloom photo 1" ></div><div class="slide"><img src="Blush_Rose_Gold_Bloom_2.jpg" alt="Blush Rose-Gold Bloom photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Blush Rose-Gold Bloom</h2><p>₹1,480</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Scarlet Ganesha Bloom photos, swipe to see more"><div class="slide"><img src="Scarlet_Ganesha_Bloom_1.jpg" alt="Scarlet Ganesha Bloom photo 1" ></div><div class="slide"><img src="Scarlet_Ganesha_Bloom_2.jpg" alt="Scarlet Ganesha Bloom photo 2" loading="lazy"></div><div class="slide"><img src="Scarlet_Ganesha_Bloom_3.jpg" alt="Scarlet Ganesha Bloom photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Scarlet Ganesha Bloom</h2><p>₹1,480</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Hibiscus Shloka Thali photos, swipe to see more"><div class="slide"><img src="Hibiscus_Shloka_Thali_1.jpg" alt="Hibiscus Shloka Thali photo 1" ></div><div class="slide"><img src="Hibiscus_Shloka_Thali_2.jpg" alt="Hibiscus Shloka Thali photo 2" loading="lazy"></div><div class="slide"><img src="Hibiscus_Shloka_Thali_3.jpg" alt="Hibiscus Shloka Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Hibiscus Shloka Thali</h2><p>₹960</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Pearl Pressed-Flower Thali photos, swipe to see more"><div class="slide"><img src="Pearl_Pressed_Flower_Thali_1.jpg" alt="Pearl Pressed-Flower Thali photo 1" ></div><div class="slide"><img src="Pearl_Pressed_Flower_Thali_2.jpg" alt="Pearl Pressed-Flower Thali photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Pearl Pressed-Flower Thali</h2><p>₹960</p></div></article>
+  <button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-i6" hidden data-title="6 inch Pooja Thali">
+
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Bal Krishna Lemon Lotus Thali photos, swipe to see more"><div class="slide"><img src="Bal_Krishna_Lemon_Lotus_Thali_1.jpg" alt="Bal Krishna Lemon Lotus Thali photo 1"></div><div class="slide"><img src="Bal_Krishna_Lemon_Lotus_Thali_2.jpg" alt="Bal Krishna Lemon Lotus Thali photo 2" loading="lazy"></div><div class="slide"><img src="Bal_Krishna_Lemon_Lotus_Thali_3.jpg" alt="Bal Krishna Lemon Lotus Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Bal Krishna Lemon Lotus Thali</h2><p>₹670</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Lemon Lotus Pond Thali photos, swipe to see more"><div class="slide"><img src="Lemon_Lotus_Pond_Thali_1.jpg" alt="Lemon Lotus Pond Thali photo 1"></div><div class="slide"><img src="Lemon_Lotus_Pond_Thali_2.jpg" alt="Lemon Lotus Pond Thali photo 2" loading="lazy"></div><div class="slide"><img src="Lemon_Lotus_Pond_Thali_3.jpg" alt="Lemon Lotus Pond Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Lemon Lotus Pond Thali</h2><p>₹670</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Peach Om Pearl Bloom Thali photos, swipe to see more"><div class="slide"><img src="Peach_Om_Pearl_Bloom_Thali_1.jpg" alt="Peach Om Pearl Bloom Thali photo 1"></div><div class="slide"><img src="Peach_Om_Pearl_Bloom_Thali_2.jpg" alt="Peach Om Pearl Bloom Thali photo 2" loading="lazy"></div><div class="slide"><img src="Peach_Om_Pearl_Bloom_Thali_3.jpg" alt="Peach Om Pearl Bloom Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Peach Om Pearl Bloom Thali</h2><p>₹670</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Emerald Bal Krishna Lotus Thali photos, swipe to see more"><div class="slide"><img src="Emerald_Bal_Krishna_Lotus_Thali_1.jpg" alt="Emerald Bal Krishna Lotus Thali photo 1"></div><div class="slide"><img src="Emerald_Bal_Krishna_Lotus_Thali_2.jpg" alt="Emerald Bal Krishna Lotus Thali photo 2" loading="lazy"></div><div class="slide"><img src="Emerald_Bal_Krishna_Lotus_Thali_3.jpg" alt="Emerald Bal Krishna Lotus Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Emerald Bal Krishna Lotus Thali</h2><p>₹670</p></div></article>
+  <button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-i5" hidden data-title="5 inch Pooja Thali">
+
+<article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Blush Pearl Bloom photos, swipe to see more"><div class="slide"><img src="Blush_Pearl_Bloom_1.jpg" alt="Blush Pearl Bloom photo 1" ></div><div class="slide"><img src="Blush_Pearl_Bloom_2.jpg" alt="Blush Pearl Bloom photo 2" loading="lazy"></div><div class="slide"><img src="Blush_Pearl_Bloom_3.jpg" alt="Blush Pearl Bloom photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Blush Pearl Bloom</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Sunshine Hibiscus photos, swipe to see more"><div class="slide"><img src="Sunshine_Hibiscus_1.jpg" alt="Sunshine Hibiscus photo 1" ></div><div class="slide"><img src="Sunshine_Hibiscus_2.jpg" alt="Sunshine Hibiscus photo 2" loading="lazy"></div><div class="slide"><img src="Sunshine_Hibiscus_3.jpg" alt="Sunshine Hibiscus photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Sunshine Hibiscus</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Rani Hibiscus photos, swipe to see more"><div class="slide"><img src="Rani_Hibiscus_1.jpg" alt="Rani Hibiscus photo 1" ></div><div class="slide"><img src="Rani_Hibiscus_2.jpg" alt="Rani Hibiscus photo 2" loading="lazy"></div><div class="slide"><img src="Rani_Hibiscus_3.jpg" alt="Rani Hibiscus photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Rani Hibiscus</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Rose Petal Gold photos, swipe to see more"><div class="slide"><img src="Rose_Petal_Gold_1.jpg" alt="Rose Petal Gold photo 1" ></div><div class="slide"><img src="Rose_Petal_Gold_2.jpg" alt="Rose Petal Gold photo 2" loading="lazy"></div><div class="slide"><img src="Rose_Petal_Gold_3.jpg" alt="Rose Petal Gold photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Rose Petal Gold</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Peacock Feather Thali photos, swipe to see more"><div class="slide"><img src="Peacock_Feather_Thali_1.jpg" alt="Peacock Feather Thali photo 1" ></div><div class="slide"><img src="Peacock_Feather_Thali_2.jpg" alt="Peacock Feather Thali photo 2" loading="lazy"></div><div class="slide"><img src="Peacock_Feather_Thali_3.jpg" alt="Peacock Feather Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Peacock Feather Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Sunrise Ombre Thali photos, swipe to see more"><div class="slide"><img src="Sunrise_Ombre_Thali_1.jpg" alt="Sunrise Ombre Thali photo 1" ></div><div class="slide"><img src="Sunrise_Ombre_Thali_2.jpg" alt="Sunrise Ombre Thali photo 2" loading="lazy"></div><div class="slide"><img src="Sunrise_Ombre_Thali_3.jpg" alt="Sunrise Ombre Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Sunrise Ombre Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Champagne Pearl Thali photos, swipe to see more"><div class="slide"><img src="Champagne_Pearl_Thali_1.jpg" alt="Champagne Pearl Thali photo 1" ></div><div class="slide"><img src="Champagne_Pearl_Thali_2.jpg" alt="Champagne Pearl Thali photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Champagne Pearl Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Peach Om Blossom photos, swipe to see more"><div class="slide"><img src="Peach_Om_Blossom_1.jpg" alt="Peach Om Blossom photo 1" ></div><div class="slide"><img src="Peach_Om_Blossom_2.jpg" alt="Peach Om Blossom photo 2" loading="lazy"></div><div class="slide"><img src="Peach_Om_Blossom_3.jpg" alt="Peach Om Blossom photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Peach Om Blossom</h2><p>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Krishna Lotus Yellow photos, swipe to see more"><div class="slide"><img src="Krishna_Lotus_Yellow_1.jpg" alt="Krishna Lotus Yellow photo 1" ></div><div class="slide"><img src="Krishna_Lotus_Yellow_2.jpg" alt="Krishna Lotus Yellow photo 2" loading="lazy"></div><div class="slide"><img src="Krishna_Lotus_Yellow_3.jpg" alt="Krishna Lotus Yellow photo 3" loading="lazy"></div><div class="slide"><img src="Krishna_Lotus_Yellow_4.jpg" alt="Krishna Lotus Yellow photo 4" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Krishna Lotus Yellow</h2><p>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Lavender Om Bloom photos, swipe to see more"><div class="slide"><img src="Lavender_Om_Bloom_1.jpg" alt="Lavender Om Bloom photo 1" ></div><div class="slide"><img src="Lavender_Om_Bloom_2.jpg" alt="Lavender Om Bloom photo 2" loading="lazy"></div><div class="slide"><img src="Lavender_Om_Bloom_3.jpg" alt="Lavender Om Bloom photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Lavender Om Bloom</h2><p>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Rose Pink Ganesha photos, swipe to see more"><div class="slide"><img src="Rose_Pink_Ganesha_1.jpg" alt="Rose Pink Ganesha photo 1" ></div><div class="slide"><img src="Rose_Pink_Ganesha_2.jpg" alt="Rose Pink Ganesha photo 2" loading="lazy"></div><div class="slide"><img src="Rose_Pink_Ganesha_3.jpg" alt="Rose Pink Ganesha photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Rose Pink Ganesha</h2><p>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Radha Krishna Lotus photos, swipe to see more"><div class="slide"><img src="Radha_Krishna_Lotus_1.jpg" alt="Radha Krishna Lotus photo 1" ></div><div class="slide"><img src="Radha_Krishna_Lotus_2.jpg" alt="Radha Krishna Lotus photo 2" loading="lazy"></div><div class="slide"><img src="Radha_Krishna_Lotus_3.jpg" alt="Radha Krishna Lotus photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Radha Krishna Lotus</h2><p>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Pastel Petal Om photos, swipe to see more"><div class="slide"><img src="Pastel_Petal_Om_1.jpg" alt="Pastel Petal Om photo 1" ></div><div class="slide"><img src="Pastel_Petal_Om_2.jpg" alt="Pastel Petal Om photo 2" loading="lazy"></div><div class="slide"><img src="Pastel_Petal_Om_3.jpg" alt="Pastel Petal Om photo 3" loading="lazy"></div><div class="slide"><img src="Pastel_Petal_Om_4.jpg" alt="Pastel Petal Om photo 4" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Pastel Petal Om</h2><p>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Mauve Petal Ganesha Thali photos, swipe to see more"><div class="slide"><img src="Mauve_Petal_Ganesha_Thali_1.jpg" alt="Mauve Petal Ganesha Thali photo 1" loading="lazy"></div><div class="slide"><img src="Mauve_Petal_Ganesha_Thali_2.jpg" alt="Mauve Petal Ganesha Thali photo 2" loading="lazy"></div><div class="slide"><img src="Mauve_Petal_Ganesha_Thali_3.jpg" alt="Mauve Petal Ganesha Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Mauve Petal Ganesha Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Blush Peach Om Thali photos, swipe to see more"><div class="slide"><img src="Blush_Peach_Om_Thali_1.jpg" alt="Blush Peach Om Thali photo 1" loading="lazy"></div><div class="slide"><img src="Blush_Peach_Om_Thali_2.jpg" alt="Blush Peach Om Thali photo 2" loading="lazy"></div><div class="slide"><img src="Blush_Peach_Om_Thali_3.jpg" alt="Blush Peach Om Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Blush Peach Om Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Pastel Sky Bloom Thali photos, swipe to see more"><div class="slide"><img src="Pastel_Sky_Bloom_Thali_1.jpg" alt="Pastel Sky Bloom Thali photo 1" loading="lazy"></div><div class="slide"><img src="Pastel_Sky_Bloom_Thali_2.jpg" alt="Pastel Sky Bloom Thali photo 2" loading="lazy"></div><div class="slide"><img src="Pastel_Sky_Bloom_Thali_3.jpg" alt="Pastel Sky Bloom Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Pastel Sky Bloom Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Saffron Ombre Marigold Thali photos, swipe to see more"><div class="slide"><img src="Saffron_Ombre_Marigold_Thali_1.jpg" alt="Saffron Ombre Marigold Thali photo 1" loading="lazy"></div><div class="slide"><img src="Saffron_Ombre_Marigold_Thali_2.jpg" alt="Saffron Ombre Marigold Thali photo 2" loading="lazy"></div><div class="slide"><img src="Saffron_Ombre_Marigold_Thali_3.jpg" alt="Saffron Ombre Marigold Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Saffron Ombre Marigold Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Apricot Shimmer Thali photos, swipe to see more"><div class="slide"><img src="Apricot_Shimmer_Thali_1.jpg" alt="Apricot Shimmer Thali photo 1" loading="lazy"></div><div class="slide"><img src="Apricot_Shimmer_Thali_2.jpg" alt="Apricot Shimmer Thali photo 2" loading="lazy"></div><div class="slide"><img src="Apricot_Shimmer_Thali_3.jpg" alt="Apricot Shimmer Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Apricot Shimmer Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Coral Pearl Spray Thali photos, swipe to see more"><div class="slide"><img src="Coral_Pearl_Spray_Thali_1.jpg" alt="Coral Pearl Spray Thali photo 1" loading="lazy"></div><div class="slide"><img src="Coral_Pearl_Spray_Thali_2.jpg" alt="Coral Pearl Spray Thali photo 2" loading="lazy"></div><div class="slide"><img src="Coral_Pearl_Spray_Thali_3.jpg" alt="Coral Pearl Spray Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Coral Pearl Spray Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Soft Blush Leaf Ganesha Thali photos, swipe to see more"><div class="slide"><img src="Soft_Blush_Leaf_Ganesha_Thali_1.jpg" alt="Soft Blush Leaf Ganesha Thali photo 1" loading="lazy"></div><div class="slide"><img src="Soft_Blush_Leaf_Ganesha_Thali_2.jpg" alt="Soft Blush Leaf Ganesha Thali photo 2" loading="lazy"></div><div class="slide"><img src="Soft_Blush_Leaf_Ganesha_Thali_3.jpg" alt="Soft Blush Leaf Ganesha Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Soft Blush Leaf Ganesha Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Petal Pink Om Thali photos, swipe to see more"><div class="slide"><img src="Petal_Pink_Om_Thali_1.jpg" alt="Petal Pink Om Thali photo 1" loading="lazy"></div><div class="slide"><img src="Petal_Pink_Om_Thali_2.jpg" alt="Petal Pink Om Thali photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Petal Pink Om Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Amber Ivory Ganesha Thali photos, swipe to see more"><div class="slide"><img src="Amber_Ivory_Ganesha_Thali_1.jpg" alt="Amber Ivory Ganesha Thali photo 1" loading="lazy"></div><div class="slide"><img src="Amber_Ivory_Ganesha_Thali_2.jpg" alt="Amber Ivory Ganesha Thali photo 2" loading="lazy"></div><div class="slide"><img src="Amber_Ivory_Ganesha_Thali_3.jpg" alt="Amber Ivory Ganesha Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Amber Ivory Ganesha Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Peach Rosette Ganesh Thali photos, swipe to see more"><div class="slide"><img src="Peach_Rosette_Ganesh_Thali_1.jpg" alt="Peach Rosette Ganesh Thali photo 1" loading="lazy"></div><div class="slide"><img src="Peach_Rosette_Ganesh_Thali_2.jpg" alt="Peach Rosette Ganesh Thali photo 2" loading="lazy"></div><div class="slide"><img src="Peach_Rosette_Ganesh_Thali_3.jpg" alt="Peach Rosette Ganesh Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Peach Rosette Ganesh Thali</h2><p><s>₹599</s>₹370</p></div></article>
+  <button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-i4" hidden data-title="4 inch Pooja Thali">
+
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Sunset Ganesha Ombre Thali photos, swipe to see more"><div class="slide"><img src="Sunset_Ganesha_Ombre_Thali_1.jpg" alt="Sunset Ganesha Ombre Thali photo 1" loading="lazy"></div><div class="slide"><img src="Sunset_Ganesha_Ombre_Thali_2.jpg" alt="Sunset Ganesha Ombre Thali photo 2" loading="lazy"></div><div class="slide"><img src="Sunset_Ganesha_Ombre_Thali_3.jpg" alt="Sunset Ganesha Ombre Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Sunset Ganesha Ombre Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Emerald Lotus Peacock Thali photos, swipe to see more"><div class="slide"><img src="Emerald_Lotus_Peacock_Thali_1.jpg" alt="Emerald Lotus Peacock Thali photo 1" loading="lazy"></div><div class="slide"><img src="Emerald_Lotus_Peacock_Thali_2.jpg" alt="Emerald Lotus Peacock Thali photo 2" loading="lazy"></div><div class="slide"><img src="Emerald_Lotus_Peacock_Thali_3.jpg" alt="Emerald Lotus Peacock Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Emerald Lotus Peacock Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Aqua Lotus Thali photos, swipe to see more"><div class="slide"><img src="Aqua_Lotus_Thali_1.jpg" alt="Aqua Lotus Thali photo 1" loading="lazy"></div><div class="slide"><img src="Aqua_Lotus_Thali_2.jpg" alt="Aqua Lotus Thali photo 2" loading="lazy"></div><div class="slide"><img src="Aqua_Lotus_Thali_3.jpg" alt="Aqua Lotus Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Aqua Lotus Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Marigold Gold Leaf Thali photos, swipe to see more"><div class="slide"><img src="Marigold_Gold_Leaf_Thali_1.jpg" alt="Marigold Gold Leaf Thali photo 1" loading="lazy"></div><div class="slide"><img src="Marigold_Gold_Leaf_Thali_2.jpg" alt="Marigold Gold Leaf Thali photo 2" loading="lazy"></div><div class="slide"><img src="Marigold_Gold_Leaf_Thali_3.jpg" alt="Marigold Gold Leaf Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Marigold Gold Leaf Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Ruby Red Leaf Thali photos, swipe to see more"><div class="slide"><img src="Ruby_Red_Leaf_Thali_1.jpg" alt="Ruby Red Leaf Thali photo 1" loading="lazy"></div><div class="slide"><img src="Ruby_Red_Leaf_Thali_2.jpg" alt="Ruby Red Leaf Thali photo 2" loading="lazy"></div><div class="slide"><img src="Ruby_Red_Leaf_Thali_3.jpg" alt="Ruby Red Leaf Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Ruby Red Leaf Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Teal Petal Bloom Thali photos, swipe to see more"><div class="slide"><img src="Teal_Petal_Bloom_Thali_1.jpg" alt="Teal Petal Bloom Thali photo 1" loading="lazy"></div><div class="slide"><img src="Teal_Petal_Bloom_Thali_2.jpg" alt="Teal Petal Bloom Thali photo 2" loading="lazy"></div><div class="slide"><img src="Teal_Petal_Bloom_Thali_3.jpg" alt="Teal Petal Bloom Thali photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Teal Petal Bloom Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Lemon Lotus Peacock Thali photos, swipe to see more"><div class="slide"><img src="Lemon_Lotus_Peacock_Thali_1.jpg" alt="Lemon Lotus Peacock Thali photo 1" loading="lazy"></div><div class="slide"><img src="Lemon_Lotus_Peacock_Thali_2.jpg" alt="Lemon Lotus Peacock Thali photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Lemon Lotus Peacock Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Rose Pink Pearl Leaf Thali photos, swipe to see more"><div class="slide"><img src="Rose_Pink_Pearl_Leaf_Thali_1.jpg" alt="Rose Pink Pearl Leaf Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Rose Pink Pearl Leaf Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Pastel Ombre Pearl Bloom Thali photos, swipe to see more"><div class="slide"><img src="Pastel_Ombre_Pearl_Bloom_Thali_1.jpg" alt="Pastel Ombre Pearl Bloom Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Pastel Ombre Pearl Bloom Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Bal Krishna Peach Thali photos, swipe to see more"><div class="slide"><img src="Bal_Krishna_Peach_Thali_1.jpg" alt="Bal Krishna Peach Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Bal Krishna Peach Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Blush Twin Leaf Thali photos, swipe to see more"><div class="slide"><img src="Blush_Twin_Leaf_Thali_1.jpg" alt="Blush Twin Leaf Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Blush Twin Leaf Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Coral Red Leaf Bloom Thali photos, swipe to see more"><div class="slide"><img src="Coral_Red_Leaf_Bloom_Thali_1.jpg" alt="Coral Red Leaf Bloom Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Coral Red Leaf Bloom Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Turquoise Leaf Pearl Thali photos, swipe to see more"><div class="slide"><img src="Turquoise_Leaf_Pearl_Thali_1.jpg" alt="Turquoise Leaf Pearl Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Turquoise Leaf Pearl Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Pink Lotus Round Thali photos, swipe to see more"><div class="slide"><img src="Pink_Lotus_Round_Thali_1.jpg" alt="Pink Lotus Round Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Pink Lotus Round Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Pastel Cutout Leaf Thali photos, swipe to see more"><div class="slide"><img src="Pastel_Cutout_Leaf_Thali_1.jpg" alt="Pastel Cutout Leaf Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Pastel Cutout Leaf Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Lemon Om Gold Flake Thali photos, swipe to see more"><div class="slide"><img src="Lemon_Om_Gold_Flake_Thali_1.jpg" alt="Lemon Om Gold Flake Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Lemon Om Gold Flake Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Lilac Pearl Bloom Thali photos, swipe to see more"><div class="slide"><img src="Lilac_Pearl_Bloom_Thali_1.jpg" alt="Lilac Pearl Bloom Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Lilac Pearl Bloom Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Midnight Teal Bloom Thali photos, swipe to see more"><div class="slide"><img src="Midnight_Teal_Bloom_Thali_1.jpg" alt="Midnight Teal Bloom Thali photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Midnight Teal Bloom Thali</h2><p>₹170</p></div>
+  <div class="offer">Buy 2 for ₹299</div></article>
+  <button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-diya" hidden data-title="Diya Holders">
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Pearl Lotus Diya Holder photos, swipe to see more"><div class="slide"><img src="Pearl_Lotus_1.jpg" alt="Pearl Lotus Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Pearl Lotus</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Ivory Lime Bloom Diya Holder photos, swipe to see more"><div class="slide"><img src="Ivory_Lime_Bloom_1.jpg" alt="Ivory Lime Bloom Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Ivory Lime Bloom</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Mint Pearl Leaf Diya Holder photos, swipe to see more"><div class="slide"><img src="Mint_Pearl_Leaf_1.jpg" alt="Mint Pearl Leaf Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Mint Pearl Leaf</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Blush Blossom Diya Holder photos, swipe to see more"><div class="slide"><img src="Blush_Blossom_1.jpg" alt="Blush Blossom Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Blush Blossom</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Coral Garden Diya Holder photos, swipe to see more"><div class="slide"><img src="Coral_Garden_1.jpg" alt="Coral Garden Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Coral Garden</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Marigold Petal Diya Holder photos, swipe to see more"><div class="slide"><img src="Marigold_Petal_1.jpg" alt="Marigold Petal Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Marigold Petal</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Magenta Lotus Diya Holder photos, swipe to see more"><div class="slide"><img src="Magenta_Lotus_1.jpg" alt="Magenta Lotus Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Magenta Lotus</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Rose Petal Diya Holder photos, swipe to see more"><div class="slide"><img src="Rose_Petal_1.jpg" alt="Rose Petal Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Rose Petal</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Golden Foil Petal Diya Holder photos, swipe to see more"><div class="slide"><img src="Golden_Foil_Petal_1.jpg" alt="Golden Foil Petal Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Golden Foil Petal</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Coral Lotus Diya Holder photos, swipe to see more"><div class="slide"><img src="Coral_Lotus_1.jpg" alt="Coral Lotus Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Coral Lotus</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Ruby Pearl Trio Diya Holder photos, swipe to see more"><div class="slide"><img src="Ruby_Pearl_Trio_1.jpg" alt="Ruby Pearl Trio Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Ruby Pearl Trio</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Sunshine Pastel Bloom Diya Holder photos, swipe to see more"><div class="slide"><img src="Sunshine_Pastel_Bloom_1.jpg" alt="Sunshine Pastel Bloom Diya Holder photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Sunshine Pastel Bloom</h2><p>₹130</p></div>
+  <div class="offer">Buy 2 for ₹240</div></article>
+<button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-gift" hidden data-title="Return Gifts">
+
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Saffron Ganesha Stand photos, swipe to see more"><div class="slide"><img src="Saffron_Ganesha_Stand_1.jpg" alt="Saffron Ganesha Stand photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Saffron Ganesha Stand</h2><p>₹199</p></div>
+  <div class="offer">Buy 2 for ₹360</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Teal Ganesha Stand photos, swipe to see more"><div class="slide"><img src="Teal_Ganesha_Stand_1.jpg" alt="Teal Ganesha Stand photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Teal Ganesha Stand</h2><p>₹199</p></div>
+  <div class="offer">Buy 2 for ₹360</div></article>
+    <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Bulk Return Gifts photos, swipe to see more"><div class="slide"><img src="Bulk_Return_Gifts_1.jpg" alt="Bulk Return Gifts photo 1" loading="lazy"></div><div class="slide"><img src="Bulk_Return_Gifts_2.jpg" alt="Bulk Return Gifts photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Bulk Return Gifts</h2><p>from ₹140</p></div>
+  <div class="offer">Bulk orders only · message us for details</div></article>
+  <button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-pres" hidden data-title="Preservation Work">
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Petal Bouquet Hanging Frame photos, swipe to see more"><div class="slide"><img src="Petal_Bouquet_Hanging_Frame_1.jpg" alt="Petal Bouquet Hanging Frame photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Petal Bouquet Hanging Frame</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Baby Keepsake Hanging Frame photos, swipe to see more"><div class="slide"><img src="Baby_Keepsake_Hanging_Frame_1.jpg" alt="Baby Keepsake Hanging Frame photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Baby Keepsake Hanging Frame</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Diwali Hamper photos, swipe to see more"><div class="slide"><img src="Diwali_Hamper_1.jpg" alt="Diwali Hamper photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Diwali Hamper</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Sunflower Bouquet Resin Frame photos, swipe to see more"><div class="slide"><img src="Sunflower_Bouquet_Resin_Frame_1.jpg" alt="Sunflower Bouquet Resin Frame photo 1" loading="lazy"></div><div class="slide"><img src="Sunflower_Bouquet_Resin_Frame_2.jpg" alt="Sunflower Bouquet Resin Frame photo 2" loading="lazy"></div><div class="slide"><img src="Sunflower_Bouquet_Resin_Frame_3.jpg" alt="Sunflower Bouquet Resin Frame photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Sunflower Bouquet Resin Frame</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Footprint Resin Frame photos, swipe to see more"><div class="slide"><img src="Footprint_Resin_Frame_1.jpg" alt="Footprint Resin Frame photo 1" loading="lazy"></div><div class="slide"><img src="Footprint_Resin_Frame_2.jpg" alt="Footprint Resin Frame photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Footprint Resin Frame</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Chocolate Bouquet Frame photos, swipe to see more"><div class="slide"><img src="Chocolate_Bouquet_Frame_1.jpg" alt="Chocolate Bouquet Frame photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Chocolate Bouquet Frame</h2></div>
+  <div class="offer">Frame size 1 × 1.5 ft · Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Baby Birth Keepsake Frame photos, swipe to see more"><div class="slide"><img src="Baby_Birth_Keepsake_Frame_1.jpg" alt="Baby Birth Keepsake Frame photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Baby Birth Keepsake Frame</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-np" hidden data-title="Name Plates">
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Floral Pink Nameplate photos, swipe to see more"><div class="slide"><img src="Floral_Pink_Nameplate_1.jpg" alt="Floral Pink Nameplate photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Floral Pink Nameplate</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Krishna Flute Nameplate photos, swipe to see more"><div class="slide"><img src="Krishna_Flute_Nameplate_1.jpg" alt="Krishna Flute Nameplate photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Krishna Flute Nameplate</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Buddha Tree Nameplate photos, swipe to see more"><div class="slide"><img src="Buddha_Tree_Nameplate_1.jpg" alt="Buddha Tree Nameplate photo 1" loading="lazy"></div><div class="slide"><img src="Buddha_Tree_Nameplate_2.jpg" alt="Buddha Tree Nameplate photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Buddha Tree Nameplate</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Heaven of Heart Krishna Nameplate photos, swipe to see more"><div class="slide"><img src="Heaven_of_Heart_Krishna_Nameplate_1.jpg" alt="Heaven of Heart Krishna Nameplate photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Heaven of Heart Krishna Nameplate</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Marathi Nameplate photos, swipe to see more"><div class="slide"><img src="Marathi_Nameplate_1.jpg" alt="Marathi Nameplate photo 1" loading="lazy"></div><div class="slide"><img src="Marathi_Nameplate_2.jpg" alt="Marathi Nameplate photo 2" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Marathi Nameplate</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+<button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-ring" hidden data-title="Ring Platters">
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Siddhant & Swati Ring Platter photos, swipe to see more"><div class="slide"><img src="Siddhant_Swati_Ring_Platter_1.jpg" alt="Siddhant & Swati Ring Platter photo 1" loading="lazy"></div><div class="slide"><img src="Siddhant_Swati_Ring_Platter_2.jpg" alt="Siddhant & Swati Ring Platter photo 2" loading="lazy"></div><div class="slide"><img src="Siddhant_Swati_Ring_Platter_3.jpg" alt="Siddhant & Swati Ring Platter photo 3" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo">&#8250;</button>
+  <div class="dots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div></div>
+  <div class="meta"><h2>Siddhant & Swati Ring Platter</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Lavender Ring Platter photos, swipe to see more"><div class="slide"><img src="Lavender_Ring_Platter_1.jpg" alt="Lavender Ring Platter photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Lavender Ring Platter</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+<button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-key" hidden data-title="Keychains">
+  <article class="card">
+  <div class="media"><div class="track" tabindex="0" aria-label="Pressed Flower Keychain photos, swipe to see more"><div class="slide"><img src="Pressed_Flower_Keychain_1.jpg" alt="Pressed Flower Keychain photo 1" loading="lazy"></div></div>
+  <button class="nav prev" aria-label="Previous photo" hidden>&#8249;</button><button class="nav next" aria-label="Next photo" hidden>&#8250;</button>
+  <div class="dots"><i class="dot on"></i></div></div>
+  <div class="meta"><h2>Pressed Flower Keychain</h2></div>
+  <div class="offer">Custom order · message us for price</div></article>
+<button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+<section class="view" id="v-about" hidden data-title="About 3G Flora">
+<div class="about">
+<h2>About 3G Flora</h2>
+<p>At 3G Flora, we specialize in high-end botanical resin art across three distinct verticals: preserving priceless floral memories, crafting unique resin home decor, and creating memorable return gifts. We turn fleeting moments into timeless, handcrafted pieces that bring beauty and sentiment into everyday life.</p>
+
+<h3>What we do</h3>
+
+<div class="blk">
+<h4>Floral Memory Preservation (Keepsakes)</h4>
+<p>Professional preservation of real flowers from life&rsquo;s major milestones&mdash;such as wedding varmalas, anniversary bouquets, and special event blooms.</p>
+<p class="key"><b>Key products:</b> Custom varmala display frames, resin preservation blocks, and floral keepsake plaques that keep sentimental memories alive permanently.</p>
+</div>
+
+<div class="blk">
+<h4>Bespoke Resin Art &amp; Home Decor</h4>
+<p>Designing one-of-a-kind, aesthetic resin creations to elevate living and working spaces.</p>
+<p class="key"><b>Key products:</b> Custom designer nameplates, resin wall art, decorative thalis, diya holders, and statement accent pieces made with real botanicals, gold leaf accents, and fine detailing.</p>
+</div>
+
+<div class="blk">
+<h4>Curated Return Gifting</h4>
+<p>Bulk and customized gifting solutions for weddings, housewarmings, corporate events, and festive celebrations.</p>
+<p class="key"><b>Key products:</b> Personalized resin keychains, pressed flower bookmarks, mini trinket dishes, custom tea coasters, and tailored gift hampers designed to leave a lasting impression on your guests.</p>
+</div>
+
+<h3>How we can help you</h3>
+
+<div class="blk">
+<h4>Event planners &amp; wedding clients</h4>
+<blockquote>3G Flora provides end-to-end floral and resin art services for your big events&mdash;from preserving the bride and groom&rsquo;s wedding varmalas into lasting keepsake frames, to designing handcrafted return gifts for your guests.</blockquote>
+</div>
+
+<div class="blk">
+<h4>Home decor &amp; retail inquiries</h4>
+<blockquote>3G Flora transforms natural botanicals into modern art. Whether you are looking for custom nameplates and home decor items or want to preserve a special bouquet, we craft unique, handmade resin pieces tailored to your style.</blockquote>
+</div>
+
+<h3>Get in touch</h3>
+<div class="links left"><a href="https://wa.me/message/N4B776DFMREYF1" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="https://www.instagram.com/3g_flora" target="_blank" rel="noopener noreferrer">Instagram</a></div>
+</div>
+<button type="button" class="backbtn" data-back>&#8249; Back to main menu</button></section>
+</main>
+<script>
+(function(){
+var menu=document.getElementById('menu'),bar=document.getElementById('bar'),vt=document.getElementById('vt');
+document.querySelectorAll('.opt').forEach(function(o){
+  var v=document.getElementById('v-'+o.dataset.go),im=v&&v.querySelector('img');
+  if(im){var x=document.createElement('img');x.src=im.getAttribute('src');x.alt='';o.querySelector('.thumb').appendChild(x)}
+});
+function show(tok){
+  var cur=null;
+  document.querySelectorAll('.view').forEach(function(v){var on=('v-'+tok)===v.id;v.hidden=!on;if(on)cur=v});
+  menu.hidden=!!cur;bar.hidden=!cur;
+  if(cur){vt.textContent=cur.dataset.title;cur.querySelectorAll('img[loading]').forEach(function(i){i.removeAttribute('loading')});cur.querySelectorAll('.track').forEach(function(k){k.dispatchEvent(new Event('scroll'))})}
+  window.scrollTo(0,0);
+}
+function fromHash(){var h=(location.hash||'').slice(1);show(document.getElementById('v-'+h)?h:'')}
+document.querySelectorAll('#back,[data-back]').forEach(function(b){b.addEventListener('click',function(){try{location.hash=''}catch(e){}show('')})});
+window.addEventListener('hashchange',fromHash);
+document.querySelectorAll('.opt').forEach(function(o){o.addEventListener('click',function(e){e.preventDefault();try{location.hash=o.dataset.go}catch(x){}show(o.dataset.go)})});
+fromHash();
+})();
+</script>
+<script>
+document.querySelectorAll('.card').forEach(function(card){
+  var track=card.querySelector('.track'),dots=card.querySelectorAll('.dot'),prev=card.querySelector('.prev'),next=card.querySelector('.next'),n=dots.length;
+  function idx(){return Math.round(track.scrollLeft/track.clientWidth)}
+  function update(){var i=idx();dots.forEach(function(d,k){d.classList.toggle('on',k===i)});prev.hidden=i===0;next.hidden=i===n-1}
+  track.addEventListener('scroll',function(){window.requestAnimationFrame(update)},{passive:true});
+  function go(d){track.scrollTo({left:(idx()+d)*track.clientWidth,behavior:'smooth'})}
+  prev.addEventListener('click',function(){go(-1)});next.addEventListener('click',function(){go(1)});
+  track.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){go(1)}if(e.key==='ArrowLeft'){go(-1)}});
+  update();
+});
+</script><script>
+document.querySelectorAll('.links a').forEach(function(a){
+  a.addEventListener('click',function(e){
+    e.preventDefault();var u=a.href,w=null;
+    try{w=window.open(u,'_blank');if(w){w.opener=null}}catch(x){}
+    if(!w){try{window.top.location.href=u}catch(x){window.location.href=u}}
+  });
+});
+</script>
+</body></html>
